@@ -1,0 +1,72 @@
+version: 2.1
+
+jobs:
+  # Build terraform image into Docker Hub.
+  build-terraform:
+    docker:
+      - image: circleci/golang:1.15
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 19.03.13
+          docker_layer_caching: true
+      - run: |
+          cd dockerImages/terraform
+          TAG=latest
+          docker build -t $DOCKER_USER/terraform:$TAG .
+          echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+          docker push $DOCKER_USER/terraform
+
+  # Build CircleCI Runner image into Docker Hub.
+  build-circleciRunner:
+    docker:
+      - image: circleci/golang:1.15
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 19.03.13
+          docker_layer_caching: true
+      - run: |
+          cd dockerImages/circleciRunner
+          TAG=latest
+          docker build -t $DOCKER_USER/circleci-runner:$TAG .
+          echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+          docker push $DOCKER_USER/circleci-runner
+
+  # Build CircleCI Runner image into Docker Hub.
+  build-alpineSlackNotifications:
+    docker:
+      - image: circleci/golang:1.15
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 19.03.13
+          docker_layer_caching: true
+      - run: |
+          cd dockerImages/alpineSlackNotifications
+          TAG=latest
+          docker build -t $DOCKER_USER/alpine-slack-notifications:$TAG .
+          echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+          docker push $DOCKER_USER/alpine-slack-notifications
+
+workflows:
+  build-and-deploy:
+    jobs:
+      # Deploy terraform image
+      - build-terraform:
+          context: docker-images
+          filters:
+            branches:
+              only: main
+      # Deploy terraform image
+      - build-circleciRunner:
+          context: docker-images
+          filters:
+            branches:
+              only: main
+      # Deploy terraform image
+      - build-alpineSlackNotifications:
+          context: docker-images
+          filters:
+            branches:
+              only: main
