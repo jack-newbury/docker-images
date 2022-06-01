@@ -12,10 +12,17 @@ jobs:
           docker_layer_caching: true
       - run: |
           cd dockerImages/terraform
+          mkdir reports
           TAG=latest
           docker build -t $DOCKER_USER/terraform:$TAG .
+          docker scan --login --token $SNYK_AUTH_TOKEN --accept-license
+          docker scan -f Dockerfile $DOCKER_USER/circleci-runner:$TAG --json > reports/terraform.json
           echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
           docker push $DOCKER_USER/terraform
+      - store_test_results:
+          path: dockerImages/terraform/reports
+      - store_artifacts:
+          path: dockerImages/terraform/reports
 
   # Build CircleCI Runner image into Docker Hub.
   build-circleciRunner:
@@ -28,10 +35,17 @@ jobs:
           docker_layer_caching: true
       - run: |
           cd dockerImages/circleciRunner
+          mkdir reports
           TAG=latest
           docker build -t $DOCKER_USER/circleci-runner:$TAG .
+          docker scan --login --token $SNYK_AUTH_TOKEN --accept-license
+          docker scan -f Dockerfile $DOCKER_USER/circleci-runner:$TAG --json > reports/circleciRunner.json
           echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
           docker push $DOCKER_USER/circleci-runner
+      - store_test_results:
+          path: dockerImages/circleciRunner/reports
+      - store_artifacts:
+          path: dockerImages/circleciRunner/reports
 
   # Build CircleCI Runner image into Docker Hub.
   build-alpineSlackNotifications:
@@ -44,10 +58,17 @@ jobs:
           docker_layer_caching: true
       - run: |
           cd dockerImages/alpineSlackNotifications
+          mkdir reports
           TAG=latest
           docker build -t $DOCKER_USER/alpine-slack-notifications:$TAG .
+          docker scan --login --token $SNYK_AUTH_TOKEN --accept-license
+          docker scan -f Dockerfile $DOCKER_USER/circleci-runner:$TAG --json > reports/alpineSlackNotifications.json
           echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
           docker push $DOCKER_USER/alpine-slack-notifications
+      - store_test_results:
+          path: dockerImages/alpineSlackNotifications/reports
+      - store_artifacts:
+          path: dockerImages/alpineSlackNotifications/reports
 
   # Build Graph As Code image into Docker Hub.
   build-graphAsCodeCi:
@@ -60,10 +81,17 @@ jobs:
           docker_layer_caching: true
       - run: |
           cd dockerImages/graphAsCodeCi
+          mkdir reports
           TAG=latest
           docker build -t $DOCKER_USER/graph-as-code-ci:$TAG .
+          docker scan --login --token $SNYK_AUTH_TOKEN --accept-license
+          docker scan -f Dockerfile $DOCKER_USER/circleci-runner:$TAG --json > reports/graphAsCodeCi.json
           echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
           docker push $DOCKER_USER/graph-as-code-ci
+      - store_test_results:
+          path: dockerImages/graphAsCodeCi/reports
+      - store_artifacts:
+          path: dockerImages/graphAsCodeCi/reports
 
 workflows:
   build-and-deploy:
