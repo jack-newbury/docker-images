@@ -4,7 +4,7 @@ jobs:
   # Build terraform image into Docker Hub.
   build-terraform:
     docker:
-      - image: circleci/golang:1.15
+      - image: cimg/golang:1.15
     steps:
       - checkout
       - setup_remote_docker:
@@ -20,7 +20,7 @@ jobs:
   # Build CircleCI Runner image into Docker Hub.
   build-circleciRunner:
     docker:
-      - image: circleci/golang:1.15
+      - image: cimg/golang:1.15
     steps:
       - checkout
       - setup_remote_docker:
@@ -36,7 +36,7 @@ jobs:
   # Build CircleCI Runner image into Docker Hub.
   build-alpineSlackNotifications:
     docker:
-      - image: circleci/golang:1.15
+      - image: cimg/golang:1.15
     steps:
       - checkout
       - setup_remote_docker:
