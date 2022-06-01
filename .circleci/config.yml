@@ -37,7 +37,7 @@ jobs:
           mkdir reports
           TAG=latest
           docker build -t $DOCKER_USER/circleci-runner:$TAG .
-          docker scan --login --token $SNYK_AUTH_TOKEN --accept-license && docker scan -f Dockerfile $DOCKER_USER/circleci-runner:$TAG --json > reports/circleciRunner.json
+          docker scan --login --token $SNYK_AUTH_TOKEN --accept-license && cd reports && touch circleciRunner.json && docker scan -f ../Dockerfile $DOCKER_USER/circleci-runner:$TAG --json > circleciRunner.json
           echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
           docker push $DOCKER_USER/circleci-runner
       - store_test_results:
@@ -59,7 +59,7 @@ jobs:
           mkdir reports
           TAG=latest
           docker build -t $DOCKER_USER/alpine-slack-notifications:$TAG .
-          docker scan --login --token $SNYK_AUTH_TOKEN --accept-license && docker scan -f Dockerfile $DOCKER_USER/alpine-slack-notifications:$TAG --json > reports/alpineSlackNotifications.json
+          docker scan --login --token $SNYK_AUTH_TOKEN --accept-license && cd reports && touch alpineSlackNotifications && docker scan -f ../Dockerfile $DOCKER_USER/alpine-slack-notifications:$TAG --json > alpineSlackNotifications.json
           echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
           docker push $DOCKER_USER/alpine-slack-notifications
       - store_test_results:
