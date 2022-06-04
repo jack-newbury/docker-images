@@ -3,6 +3,7 @@ FROM python:3.9-alpine
 ARG TERRAFORM_VERSION=1.2.2
 ARG JQ_VERSION=1.6
 ARG TERRAGRUNT=v0.37.1
+ARG DOCTL_VERSION=1.76.2
 
 ## Install tflint
 RUN apk add --no-cache ca-certificates openssh git bash unzip openssl curl wget unzip vault
@@ -19,3 +20,6 @@ RUN cd tmp && \
 
 ## Install Terragrunt
 RUN wget -O /usr/local/bin/terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/${TERRAGRUNT}/terragrunt_linux_amd64 && chmod +x /usr/local/bin/terragrunt
+
+## Intsall DOCTL
+RUN wget https://github.com/digitalocean/doctl/releases/download/v${DOCTL_VERSION}/doctl-${DOCTL_VERSION}-linux-amd64.tar.gz && tar xf doctl-${DOCTL_VERSION}-linux-amd64.tar.gz && mv doctl /usr/local/bin && chmod +x /usr/local/bin/doctl
