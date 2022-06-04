@@ -78,8 +78,8 @@ jobs:
           cd dockerImages/vaultCli
           TAG=latest
           echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
-          docker build -t $DOCKER_USER/vaultCli:$TAG .
-          docker push $DOCKER_USER/vaultCli
+          docker build -t $DOCKER_USER/vault-cli:$TAG .
+          docker push $DOCKER_USER/vault-cli
 
 workflows:
   build-and-deploy:
