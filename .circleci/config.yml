@@ -65,6 +65,22 @@ jobs:
           docker build -t $DOCKER_USER/graph-as-code-ci:$TAG .
           docker push $DOCKER_USER/graph-as-code-ci
 
+  # Build Vault CLI image into Docker Hub.
+  build-vaultCli:
+    docker:
+      - image: cimg/go:1.18.2
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 20.10.14
+          docker_layer_caching: true
+      - run: |
+          cd dockerImages/vaultCli
+          TAG=latest
+          echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+          docker build -t $DOCKER_USER/vaultCli:$TAG .
+          docker push $DOCKER_USER/vaultCli
+
 workflows:
   build-and-deploy:
     jobs:
@@ -88,6 +104,12 @@ workflows:
               only: main
       # Deploy Graph As Code CI image
       - build-graphAsCodeCi:
+          context: docker-images
+          filters:
+            branches:
+              only: main
+      # Deploy Vault CLI image
+      - build-vaultCli:
           context: docker-images
           filters:
             branches:
