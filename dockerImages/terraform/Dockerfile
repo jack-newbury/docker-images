@@ -6,7 +6,8 @@ ARG TERRAGRUNT=v0.37.1
 ARG DOCTL_VERSION=1.76.2
 
 ## Install tflint
-RUN apk add --no-cache ca-certificates openssh git bash unzip openssl curl wget unzip vault
+RUN apk add --no-cache ca-certificates openssh git bash unzip openssl curl wget unzip vault libcap
+RUN setcap cap_ipc_lock= /usr/sbin/vault
 
 RUN curl -L https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 -o /tmp/jq-linux64 && chmod a+x /tmp/jq-linux64 && mv /tmp/jq-linux64 /usr/bin/jq
 
