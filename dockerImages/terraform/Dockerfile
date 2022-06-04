@@ -3,6 +3,25 @@ FROM python:3.9-alpine
 ARG TERRAFORM_VERSION=1.2.2
 ARG JQ_VERSION=1.6
 ARG TERRAGRUNT=v0.37.1
+ENV VERSION 1.10.3
+
+ADD https://releases.hashicorp.com/vault/${VERSION}/vault_${VERSION}_linux_amd64.zip /tmp/
+ADD https://releases.hashicorp.com/vault/${VERSION}/vault_${VERSION}_SHA256SUMS      /tmp/
+ADD https://releases.hashicorp.com/vault/${VERSION}/vault_${VERSION}_SHA256SUMS.sig  /tmp/
+
+WORKDIR /tmp/
+
+RUN apk --update add --virtual verify gpgme \
+    && gpg --keyserver keyserver.ubuntu.com --recv-key 0x72D7468F \
+    && gpg --verify /tmp/vault_${VERSION}_SHA256SUMS.sig \
+    && apk del verify \
+    && cat vault_${VERSION}_SHA256SUMS | grep linux_amd64 | sha256sum -c \
+    && unzip vault_${VERSION}_linux_amd64.zip \
+    && mv vault /usr/local/bin/ \
+    && rm -rf /tmp/* \
+    && rm -rf /var/cache/apk/*
+
+WORKDIR /
 
 ## Install tflint
 RUN apk add --no-cache ca-certificates openssh git bash unzip openssl curl wget unzip
