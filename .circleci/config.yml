@@ -81,6 +81,22 @@ jobs:
           docker build -t $DOCKER_USER/vault-cli:$TAG .
           docker push $DOCKER_USER/vault-cli
 
+  # Build Go Docker builder image into Docker Hub.
+  build-goDockerBuilder:
+    docker:
+      - image: cimg/go:1.18.2
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 20.10.14
+          docker_layer_caching: true
+      - run: |
+          cd dockerImages/goDockerBuilder
+          TAG=latest
+          echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+          docker build -t $DOCKER_USER/go-docker-builder:$TAG .
+          docker push $DOCKER_USER/go-docker-builder
+
 workflows:
   build-and-deploy:
     jobs:
@@ -110,6 +126,12 @@ workflows:
               only: main
       # Deploy Vault CLI image
       - build-vaultCli:
+          context: docker-images
+          filters:
+            branches:
+              only: main
+      # Deploy Go Docker Builder
+      - build-goDockerBuilder:
           context: docker-images
           filters:
             branches:
