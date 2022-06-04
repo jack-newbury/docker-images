@@ -3,7 +3,7 @@ version: 2.1
 get_secrets: &get_secrets
   name: Get secrets from HCP VAULT
   command: |
-    vault login -method=userpass username=cicd password=$VAULT_PASS
+    vault login -no-print -method=userpass username=cicd password=$VAULT_PASS
     echo "export DOCKER_USER=$(vault kv get -format json secret/core-infra/docker-hub | jq -r '.data.data.username')" >> $BASH_ENV
     echo "export DOCKER_PASS=$(vault kv get -format json secret/core-infra/docker-hub | jq -r '.data.data.password')" >> $BASH_ENV
 
