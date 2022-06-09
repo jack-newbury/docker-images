@@ -54,17 +54,6 @@ jobs:
             echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
             cd dockerImages/terraform
             DOCKER_CLI_EXPERIMENTAL=enabled docker buildx build --platform linux/arm64,linux/amd64 -t $DOCKER_USER/terraform:$TAG --push .
-      # - checkout
-      # # - setup_remote_docker:
-      # #     version: 20.10.14
-      # #     docker_layer_caching: true
-      # - run: |
-      #     cd dockerImages/terraform
-      #     TAG=latest
-      #     echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
-      #     docker buildx create --name mybuilder
-      #     docker buildx use mybuilder
-      #     docker buildx build --platform linux/amd64,linux/arm64 -t $DOCKER_USER/terraform:$TAG --push .
 
   # Build CircleCI Runner image into Docker Hub.
   build-circleciRunner:
@@ -86,57 +75,51 @@ jobs:
 
   # Build CircleCI Runner image into Docker Hub.
   build-alpineSlackNotifications:
-    docker:
-      - image: jacknewbury/go-docker-builder:latest
+    machine:
+      image: ubuntu-2004:202010-01
     steps:
+      - setup
       - run:
           <<: *get_secrets
-      - checkout
-      - setup_remote_docker:
-          version: 20.10.14
-          docker_layer_caching: true
-      - run: |
-          cd dockerImages/alpineSlackNotifications
-          TAG=latest
-          echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
-          docker build -t $DOCKER_USER/alpine-slack-notifications:$TAG .
-          docker push $DOCKER_USER/alpine-slack-notifications
+      - run:
+          name: Build ARM docker
+          command: |
+            TAG=latest
+            echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+            cd dockerImages/alpineSlackNotifications
+            DOCKER_CLI_EXPERIMENTAL=enabled docker buildx build --platform linux/arm64,linux/amd64 -t $DOCKER_USER/alpine-slack-notifications:$TAG --push .
 
   # Build Graph As Code image into Docker Hub.
   build-graphAsCodeCi:
-    docker:
-      - image: jacknewbury/go-docker-builder:latest
+    machine:
+      image: ubuntu-2004:202010-01
     steps:
+      - setup
       - run:
           <<: *get_secrets
-      - checkout
-      - setup_remote_docker:
-          version: 20.10.14
-          docker_layer_caching: true
-      - run: |
-          cd dockerImages/graphAsCodeCi
-          TAG=latest
-          echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
-          docker build -t $DOCKER_USER/graph-as-code-ci:$TAG .
-          docker push $DOCKER_USER/graph-as-code-ci
+      - run:
+          name: Build ARM docker
+          command: |
+            TAG=latest
+            echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+            cd dockerImages/graphAsCodeCi
+            DOCKER_CLI_EXPERIMENTAL=enabled docker buildx build --platform linux/arm64,linux/amd64 -t $DOCKER_USER/graph-as-code-ci:$TAG --push .
 
   # Build Vault CLI image into Docker Hub.
   build-vaultCli:
-    docker:
-      - image: jacknewbury/go-docker-builder:latest
+    machine:
+      image: ubuntu-2004:202010-01
     steps:
+      - setup
       - run:
           <<: *get_secrets
-      - checkout
-      - setup_remote_docker:
-          version: 20.10.14
-          docker_layer_caching: true
-      - run: |
-          cd dockerImages/vaultCli
-          TAG=latest
-          echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
-          docker build -t $DOCKER_USER/vault-cli:$TAG .
-          docker push $DOCKER_USER/vault-cli
+      - run:
+          name: Build ARM docker
+          command: |
+            TAG=latest
+            echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+            cd dockerImages/vaultCli
+            DOCKER_CLI_EXPERIMENTAL=enabled docker buildx build --platform linux/arm64,linux/amd64 -t $DOCKER_USER/vault-cli:$TAG --push .
 
   # Build Go Docker builder image into Docker Hub.
   build-goDockerBuilder:
@@ -172,23 +155,23 @@ workflows:
       #       branches:
       #         only: main
       # # Deploy Alpine Slack Notifications image
-      # - build-alpineSlackNotifications:
-      #     context: docker-images
-      #     filters:
-      #       branches:
-      #         only: main
+      - build-alpineSlackNotifications:
+          context: docker-images
+          filters:
+            branches:
+              only: main
       # # Deploy Graph As Code CI image
-      # - build-graphAsCodeCi:
-      #     context: docker-images
-      #     filters:
-      #       branches:
-      #         only: main
-      # # Deploy Vault CLI image
-      # - build-vaultCli:
-      #     context: docker-images
-      #     filters:
-      #       branches:
-      #         only: main
+      - build-graphAsCodeCi:
+          context: docker-images
+          filters:
+            branches:
+              only: main
+      # Deploy Vault CLI image
+      - build-vaultCli:
+          context: docker-images
+          filters:
+            branches:
+              only: main
       # Deploy Go Docker Builder
       # - build-goDockerBuilder:
       #     context: docker-images
