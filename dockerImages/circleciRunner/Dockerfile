@@ -1,5 +1,10 @@
 FROM circleci/runner:launch-agent
 
+ARG TERRAFORM_VERSION=1.2.2
+ARG JQ_VERSION=1.6
+ARG TERRAGRUNT=v0.37.2
+ARG DOCTL_VERSION=1.76.2
+
 SHELL ["/bin/bash", "-c"]
 USER root
 
@@ -26,7 +31,7 @@ RUN set -ex \
 RUN pip3 install --upgrade pip && pip3 install ansible==2.9.9
 
 # Install latest JQ
-RUN sudo curl -L https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 -o /tmp/jq-linux64 && sudo chmod a+x /tmp/jq-linux64 && sudo mv /tmp/jq-linux64 /usr/bin/jq
+RUN curl -L https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 -o /tmp/jq-linux64 && chmod a+x /tmp/jq-linux64 && mv /tmp/jq-linux64 /usr/bin/jq
 
 ## Install boto3
 RUN pip3 install boto3
@@ -36,8 +41,15 @@ RUN sudo curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "aws
     sudo unzip awscliv2.zip; \
     sudo ./aws/install -i /usr/local/aws-cli -b /usr/local/bin
 
-RUN sudo useradd ansible ;\
-    sudo mkdir -p /home/ansible/.ssh/; \
-    sudo echo "ansible ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers; \
-    sudo chown -R circleci:circleci /home/ansible/; \
-    sudo chown -R circleci:circleci /home/circleci
+## Install Terraform
+RUN cd tmp && \
+    wget https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip && unzip terraform_${TERRAFORM_VERSION}_linux_amd64.zip -d /usr/bin
+
+## Install Terragrunt
+RUN wget -O /usr/local/bin/terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/${TERRAGRUNT}/terragrunt_linux_amd64 && chmod +x /usr/local/bin/terragrunt
+
+## Intsall DOCTL
+RUN wget https://github.com/digitalocean/doctl/releases/download/v${DOCTL_VERSION}/doctl-${DOCTL_VERSION}-linux-amd64.tar.gz && tar xf doctl-${DOCTL_VERSION}-linux-amd64.tar.gz && mv doctl /usr/local/bin && chmod +x /usr/local/bin/doctl
+
+## Install Kubectl
+RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
