@@ -10,11 +10,11 @@ ARG DOCTL_VERSION=1.76.2
 RUN apk add --no-cache ca-certificates openssh git bash unzip openssl curl wget unzip vault libcap gcc build-base
 RUN setcap cap_ipc_lock= /usr/sbin/vault
 
-RUN pip install --no-cache-dir -U awscli
+RUN pip install --no-cache-dir -U awscli checkov
 
 ## Install Terraform
 RUN cd tmp && \
-    RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then ARCHITECTURE=amd64; elif [ "$TARGETPLATFORM" = "linux/arm64" ]; then ARCHITECTURE=arm64; else ARCHITECTURE=amd64; fi \
+    RUN if [ "$TARGETPLATFORM" = "linux/amd64" ] then ARCHITECTURE=amd64; elif [ "$TARGETPLATFORM" = "linux/arm64" ] then ARCHITECTURE=arm64; else ARCHITECTURE=amd64; fi \
     && wget https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_${ARCHITECTURE}.zip && unzip terraform_${TERRAFORM_VERSION}_linux_${ARCHITECTURE}.zip -d /usr/bin
 
 ## Install Terragrunt
