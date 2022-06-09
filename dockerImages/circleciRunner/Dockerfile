@@ -14,7 +14,7 @@ RUN sudo apt-get update; \
     sudo apt-get upgrade -y
 
 ## Install packages needed.
-RUN sudo apt-get install gnupg curl git gettext-base rsync build-essential zlib1g-dev bzip2 libreadline-dev libssl-dev rustc docker.io software-properties-common -y
+RUN sudo apt-get install gnupg curl git gettext-base rsync build-essential zlib1g-dev bzip2 libreadline-dev libssl-dev rustc docker.io software-properties-common unzip -y
 
 ENV PYENV_ROOT /root/.pyenv
 ENV PATH $PYENV_ROOT/shims:$PYENV_ROOT/bin:$PATH
@@ -53,6 +53,8 @@ RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then ARCHITECTURE=amd64; elif [ "$
 RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/${ARCHITECTURE}/kubectl" && install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
 
 ## Install Vault
-RUN curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
-RUN apt-add-repository "deb [arch=${ARCHITECTURE}] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
-RUN sudo apt update -y && sudo apt install vault -y
+RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then ARCHITECTURE=amd64; elif [ "$TARGETPLATFORM" = "linux/arm64" ]; then ARCHITECTURE=arm64; else ARCHITECTURE=amd64; fi \
+    && wget https://releases.hashicorp.com/vault/1.10.3/vault_1.10.3_linux_${ARCHITECTURE}.zip -O /tmp/vault.zip \
+    && unzip /tmp/vault.zip \
+    && mv /tmp/vault /usr/local/bin/vault \
+    && chmod +x /usr/local/bin/vault
