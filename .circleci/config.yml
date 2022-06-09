@@ -1,5 +1,28 @@
 version: 2.1
 
+commands:
+  setup:
+    steps:
+      - checkout
+      - run:
+          name: Setup buildx and qemu
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y qemu-user-static
+            sudo apt-get install -y binfmt-support
+      - run:
+          name: Check versions
+          command: |
+            qemu-aarch64-static --version
+            update-binfmts --version
+      - run:
+          name: Create builder
+          command: |
+            export DOCKER_CLI_EXPERIMENTAL=enabled
+            docker buildx create --name arm-builder
+            docker buildx use arm-builder
+            docker buildx inspect --bootstrap
+
 get_secrets: &get_secrets
   name: Get secrets from HCP VAULT
   command: |
@@ -11,21 +34,29 @@ jobs:
   # Build terraform image into Docker Hub.
   build-terraform:
     docker:
-      - image: jacknewbury/go-docker-builder:latest
+      - image: ubuntu-2004:202010-01
     steps:
       - run:
           <<: *get_secrets
-      - checkout
-      # - setup_remote_docker:
-      #     version: 20.10.14
-      #     docker_layer_caching: true
-      - run: |
-          cd dockerImages/terraform
-          TAG=latest
-          echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
-          docker buildx create --name mybuilder
-          docker buildx use mybuilder
-          docker buildx build --platform linux/amd64,linux/arm64 -t $DOCKER_USER/terraform:$TAG --push .
+      - setup
+      - run:
+          name: Build ARM docker
+          command: |
+            TAG=latest
+            echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+            cd dockerImages/terraform
+            DOCKER_CLI_EXPERIMENTAL=enabled docker buildx build --platform linux/arm64 --load -t $DOCKER_USER/terraform:$TAG --push .
+      # - checkout
+      # # - setup_remote_docker:
+      # #     version: 20.10.14
+      # #     docker_layer_caching: true
+      # - run: |
+      #     cd dockerImages/terraform
+      #     TAG=latest
+      #     echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+      #     docker buildx create --name mybuilder
+      #     docker buildx use mybuilder
+      #     docker buildx build --platform linux/amd64,linux/arm64 -t $DOCKER_USER/terraform:$TAG --push .
 
   # Build CircleCI Runner image into Docker Hub.
   build-circleciRunner:
