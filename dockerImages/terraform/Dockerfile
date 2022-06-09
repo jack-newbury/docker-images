@@ -13,9 +13,10 @@ RUN setcap cap_ipc_lock= /usr/sbin/vault
 RUN pip install --no-cache-dir -U awscli
 
 ## Install Terraform
-RUN cd tmp && \
-    RUN if [ "$TARGETPLATFORM" = "linux/amd64" ] then ARCHITECTURE=amd64; elif [ "$TARGETPLATFORM" = "linux/arm64" ] then ARCHITECTURE=arm64; else ARCHITECTURE=amd64; fi \
-    && wget https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_${ARCHITECTURE}.zip && unzip terraform_${TERRAFORM_VERSION}_linux_${ARCHITECTURE}.zip -d /usr/bin
+RUN cd tmp
+RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then ARCHITECTURE=amd64; elif [ "$TARGETPLATFORM" = "linux/arm64" ]; then ARCHITECTURE=arm64; else ARCHITECTURE=amd64; fi \
+    && wget https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_${ARCHITECTURE}.zip \
+    && unzip terraform_${TERRAFORM_VERSION}_linux_${ARCHITECTURE}.zip -d /usr/bin
 
 ## Install Terragrunt
 RUN wget -O /usr/local/bin/terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/${TERRAGRUNT}/terragrunt_linux_${ARCHITECTURE} && chmod +x /usr/local/bin/terragrunt
