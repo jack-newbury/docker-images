@@ -56,5 +56,5 @@ RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/s
 RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then ARCHITECTURE=amd64; elif [ "$TARGETPLATFORM" = "linux/arm64" ]; then ARCHITECTURE=arm64; else ARCHITECTURE=amd64; fi \
     && wget https://releases.hashicorp.com/vault/1.10.3/vault_1.10.3_linux_${ARCHITECTURE}.zip -O /tmp/vault.zip \
     && unzip /tmp/vault.zip \
-    && mv /tmp/vault/vault /usr/local/bin/vault \
+    && mv /tmp/vault /usr/local/bin/. \
     && chmod +x /usr/local/bin/vault
