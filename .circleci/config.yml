@@ -26,7 +26,7 @@ jobs:
           docker context create mybuilder
           docker buildx create --name mybuilder mybuilder
           docker buildx use mybuilder
-          docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 -t $DOCKER_USER/terraform:$TAG --push .
+          docker buildx build --platform linux/amd64,linux/arm64 -t $DOCKER_USER/terraform:$TAG --push .
 
   # Build CircleCI Runner image into Docker Hub.
   build-circleciRunner:
@@ -127,33 +127,33 @@ workflows:
           filters:
             branches:
               only: main
-      # Deploy CircleCI Runner image
-      - build-circleciRunner:
-          context: docker-images
-          filters:
-            branches:
-              only: main
-      # Deploy Alpine Slack Notifications image
-      - build-alpineSlackNotifications:
-          context: docker-images
-          filters:
-            branches:
-              only: main
-      # Deploy Graph As Code CI image
-      - build-graphAsCodeCi:
-          context: docker-images
-          filters:
-            branches:
-              only: main
-      # Deploy Vault CLI image
-      - build-vaultCli:
-          context: docker-images
-          filters:
-            branches:
-              only: main
-      # Deploy Go Docker Builder
-      - build-goDockerBuilder:
-          context: docker-images
-          filters:
-            branches:
-              only: main
+      # # Deploy CircleCI Runner image
+      # - build-circleciRunner:
+      #     context: docker-images
+      #     filters:
+      #       branches:
+      #         only: main
+      # # Deploy Alpine Slack Notifications image
+      # - build-alpineSlackNotifications:
+      #     context: docker-images
+      #     filters:
+      #       branches:
+      #         only: main
+      # # Deploy Graph As Code CI image
+      # - build-graphAsCodeCi:
+      #     context: docker-images
+      #     filters:
+      #       branches:
+      #         only: main
+      # # Deploy Vault CLI image
+      # - build-vaultCli:
+      #     context: docker-images
+      #     filters:
+      #       branches:
+      #         only: main
+      # # Deploy Go Docker Builder
+      # - build-goDockerBuilder:
+      #     context: docker-images
+      #     filters:
+      #       branches:
+      #         only: main

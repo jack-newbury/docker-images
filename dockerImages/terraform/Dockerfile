@@ -1,5 +1,6 @@
 FROM python:3.9-alpine
 
+ARG TARGETPLATFORM
 ARG TERRAFORM_VERSION=1.2.2
 ARG JQ_VERSION=1.6
 ARG TERRAGRUNT=v0.37.2
@@ -9,21 +10,20 @@ ARG DOCTL_VERSION=1.76.2
 RUN apk add --no-cache ca-certificates openssh git bash unzip openssl curl wget unzip vault libcap
 RUN setcap cap_ipc_lock= /usr/sbin/vault
 
-RUN curl -L https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 -o /tmp/jq-linux64 && chmod a+x /tmp/jq-linux64 && mv /tmp/jq-linux64 /usr/bin/jq
-
 RUN apk add --no-cache --virtual .build_deps build-base libffi-dev \
     && pip install --no-cache-dir -U checkov awscli \
     && apk del .build_deps
 
 ## Install Terraform
 RUN cd tmp && \
-    wget https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip && unzip terraform_${TERRAFORM_VERSION}_linux_amd64.zip -d /usr/bin
+    RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then ARCHITECTURE=amd64; elif [ "$TARGETPLATFORM" = "linux/arm64" ]; then ARCHITECTURE=arm64; else ARCHITECTURE=amd64; fi \
+    && wget https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_${ARCHITECTURE}.zip && unzip terraform_${TERRAFORM_VERSION}_linux_${ARCHITECTURE}.zip -d /usr/bin
 
 ## Install Terragrunt
-RUN wget -O /usr/local/bin/terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/${TERRAGRUNT}/terragrunt_linux_amd64 && chmod +x /usr/local/bin/terragrunt
+RUN wget -O /usr/local/bin/terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/${TERRAGRUNT}/terragrunt_linux_${ARCHITECTURE} && chmod +x /usr/local/bin/terragrunt
 
 ## Intsall DOCTL
 RUN wget https://github.com/digitalocean/doctl/releases/download/v${DOCTL_VERSION}/doctl-${DOCTL_VERSION}-linux-amd64.tar.gz && tar xf doctl-${DOCTL_VERSION}-linux-amd64.tar.gz && mv doctl /usr/local/bin && chmod +x /usr/local/bin/doctl
 
 ## Install Kubectl
-RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/${ARCHITECTURE}/kubectl" && install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
