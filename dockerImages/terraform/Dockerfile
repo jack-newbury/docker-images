@@ -10,7 +10,7 @@ ARG DOCTL_VERSION=1.76.2
 RUN apk add --no-cache ca-certificates openssh git bash unzip openssl curl wget unzip vault libcap
 RUN setcap cap_ipc_lock= /usr/sbin/vault
 
-RUN apk add --no-cache .build_deps build-base libffi-dev \
+RUN apk add --no-cache --virtual .build_deps build-base libffi-dev \
     && pip install --no-cache-dir -U checkov awscli \
     && apk del .build_deps
 
