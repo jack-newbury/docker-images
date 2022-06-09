@@ -58,20 +58,18 @@ jobs:
   # Build CircleCI Runner image into Docker Hub.
   build-circleciRunner:
     machine:
-      image: jacknewbury/go-docker-builder:latest
+      image: ubuntu-2004:202010-01
     steps:
+      - setup
       - run:
           <<: *get_secrets
-      - checkout
-      - setup_remote_docker:
-          version: 20.10.14
-          docker_layer_caching: true
-      - run: |
-          cd dockerImages/circleciRunner
-          TAG=latest
-          echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
-          docker build -t $DOCKER_USER/circleci-runner:$TAG .
-          docker push $DOCKER_USER/circleci-runner
+      - run:
+          name: Build ARM docker
+          command: |
+            TAG=latest
+            echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+            cd dockerImages/circleciRunner
+            DOCKER_CLI_EXPERIMENTAL=enabled docker buildx build --platform linux/arm64,linux/amd64 -t $DOCKER_USER/circleci-runner:$TAG --push .
 
   # Build CircleCI Runner image into Docker Hub.
   build-alpineSlackNotifications:
@@ -148,19 +146,19 @@ workflows:
           filters:
             branches:
               only: main
-      # # Deploy CircleCI Runner image
-      # - build-circleciRunner:
-      #     context: docker-images
-      #     filters:
-      #       branches:
-      #         only: main
-      # # Deploy Alpine Slack Notifications image
+      # Deploy CircleCI Runner image
+      - build-circleciRunner:
+          context: docker-images
+          filters:
+            branches:
+              only: main
+      # Deploy Alpine Slack Notifications image
       - build-alpineSlackNotifications:
           context: docker-images
           filters:
             branches:
               only: main
-      # # Deploy Graph As Code CI image
+      # Deploy Graph As Code CI image
       - build-graphAsCodeCi:
           context: docker-images
           filters:
