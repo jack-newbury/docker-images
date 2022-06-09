@@ -123,11 +123,11 @@ workflows:
   build-and-deploy:
     jobs:
       # Deploy terraform image
-      - build-terraform:
-          context: docker-images
-          filters:
-            branches:
-              only: main
+      # - build-terraform:
+      #     context: docker-images
+      #     filters:
+      #       branches:
+      #         only: main
       # # Deploy CircleCI Runner image
       # - build-circleciRunner:
       #     context: docker-images
@@ -152,9 +152,9 @@ workflows:
       #     filters:
       #       branches:
       #         only: main
-      # # Deploy Go Docker Builder
-      # - build-goDockerBuilder:
-      #     context: docker-images
-      #     filters:
-      #       branches:
-      #         only: main
+      # Deploy Go Docker Builder
+      - build-goDockerBuilder:
+          context: docker-images
+          filters:
+            branches:
+              only: main
