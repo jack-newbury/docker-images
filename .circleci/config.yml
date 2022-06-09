@@ -53,7 +53,7 @@ jobs:
             TAG=latest
             echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
             cd dockerImages/terraform
-            DOCKER_CLI_EXPERIMENTAL=enabled docker buildx build --platform linux/arm64 -t $DOCKER_USER/terraform:$TAG --push .
+            DOCKER_CLI_EXPERIMENTAL=enabled docker buildx build --platform linux/arm64,linux/amd64 -t $DOCKER_USER/terraform:$TAG --push .
       # - checkout
       # # - setup_remote_docker:
       # #     version: 20.10.14
