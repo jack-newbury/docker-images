@@ -10,7 +10,7 @@ ARG DOCTL_VERSION=1.76.2
 RUN apk add --no-cache ca-certificates openssh git bash unzip openssl curl wget unzip vault libcap gcc build-base
 RUN setcap cap_ipc_lock= /usr/sbin/vault
 
-RUN pip install --no-cache-dir -U awscli checkov
+RUN pip install --no-cache-dir -U awscli
 
 ## Install Terraform
 RUN cd tmp && \
