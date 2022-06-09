@@ -16,14 +16,13 @@ jobs:
       - run:
           <<: *get_secrets
       - checkout
-      - setup_remote_docker:
-          version: 20.10.14
-          docker_layer_caching: true
+      # - setup_remote_docker:
+      #     version: 20.10.14
+      #     docker_layer_caching: true
       - run: |
           cd dockerImages/terraform
           TAG=latest
           echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
-          docker context create mybuilder
           docker buildx create --name mybuilder mybuilder
           docker buildx use mybuilder
           docker buildx build --platform linux/amd64,linux/arm64 -t $DOCKER_USER/terraform:$TAG --push .
@@ -122,11 +121,11 @@ workflows:
   build-and-deploy:
     jobs:
       # Deploy terraform image
-      # - build-terraform:
-      #     context: docker-images
-      #     filters:
-      #       branches:
-      #         only: main
+      - build-terraform:
+          context: docker-images
+          filters:
+            branches:
+              only: main
       # # Deploy CircleCI Runner image
       # - build-circleciRunner:
       #     context: docker-images
@@ -152,8 +151,8 @@ workflows:
       #       branches:
       #         only: main
       # Deploy Go Docker Builder
-      - build-goDockerBuilder:
-          context: docker-images
-          filters:
-            branches:
-              only: main
+      # - build-goDockerBuilder:
+      #     context: docker-images
+      #     filters:
+      #       branches:
+      #         only: main
