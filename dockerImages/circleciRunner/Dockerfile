@@ -21,6 +21,9 @@ ENV PATH $PYENV_ROOT/shims:$PYENV_ROOT/bin:$PATH
 ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
 
+## Add Github SSH
+RUN mkdir ~/.ssh/ && touch ~/.ssh/known_hosts && ssh-keyscan github.com >> ~/.ssh/known_hosts
+
 ## Install Python.
 RUN set -ex \
     && curl https://pyenv.run | bash \
