@@ -1,4 +1,4 @@
-FROM python:3.12-alpine
+FROM python:3.10-alpine3.16
 
 ARG TARGETPLATFORM
 ARG TERRAFORM_VERSION=1.2.2
