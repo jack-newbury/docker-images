@@ -1,4 +1,4 @@
-FROM python:3.9-alpine
+FROM python:3.12-alpine
 
 ARG TARGETPLATFORM
 ARG TERRAFORM_VERSION=1.2.2
@@ -7,7 +7,7 @@ ARG TERRAGRUNT=v0.37.2
 ARG DOCTL_VERSION=1.76.2
 
 ## Install tflint
-RUN apk add --no-cache ca-certificates openssh git bash unzip openssl curl wget unzip vault libcap gcc build-base
+RUN apk add --no-cache ca-certificates openssh git bash unzip openssl curl wget unzip vault libcap gcc build-base jq
 RUN setcap cap_ipc_lock= /usr/sbin/vault
 
 RUN pip install --no-cache-dir -U awscli
