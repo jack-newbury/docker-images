@@ -1,10 +1,10 @@
 FROM python:3.10-alpine3.16
 
 ARG TARGETPLATFORM
-ARG TERRAFORM_VERSION=1.2.2
+ARG TERRAFORM_VERSION=1.2.4
 ARG JQ_VERSION=1.6
-ARG TERRAGRUNT=v0.37.2
-ARG DOCTL_VERSION=1.76.2
+ARG TERRAGRUNT=v0.38.4
+ARG DOCTL_VERSION=1.78.0
 
 ## Install tflint
 RUN apk add --no-cache ca-certificates openssh git bash unzip openssl curl wget unzip vault libcap gcc build-base jq
