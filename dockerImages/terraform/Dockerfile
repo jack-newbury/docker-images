@@ -33,4 +33,4 @@ RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then ARCHITECTURE=amd64; elif [ "$
 
 ## Install Helm
 RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then ARCHITECTURE=amd64; elif [ "$TARGETPLATFORM" = "linux/arm64" ]; then ARCHITECTURE=arm64; else ARCHITECTURE=amd64; fi \
-    && wget "https://get.helm.sh/helm-v3.9.2-linux-${ARCHITECTURE}.tar.gz" && tar -zxf helm-v3.9.2-linux-${ARCHITECTURE}.tar.gz && mv linux-${ARCHITECTURE}/helm /usr/local/bin && chmod +x helm
+    && wget "https://get.helm.sh/helm-v3.9.2-linux-${ARCHITECTURE}.tar.gz" && tar -zxf helm-v3.9.2-linux-${ARCHITECTURE}.tar.gz && mv linux-${ARCHITECTURE}/helm /usr/local/bin && chmod +x /usr/local/bin/helm
