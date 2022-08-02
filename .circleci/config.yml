@@ -45,8 +45,8 @@ jobs:
       image: ubuntu-2004:202010-01
     steps:
       - setup
-      - run:
-          <<: *get_secrets
+      # - run:
+      #     <<: *get_secrets
       - run:
           name: Build ARM docker
           command: |
@@ -61,8 +61,8 @@ jobs:
       image: ubuntu-2004:202010-01
     steps:
       - setup
-      - run:
-          <<: *get_secrets
+      # - run:
+      #     <<: *get_secrets
       - run:
           name: Build ARM docker
           command: |
@@ -77,8 +77,8 @@ jobs:
       image: ubuntu-2004:202010-01
     steps:
       - setup
-      - run:
-          <<: *get_secrets
+      # - run:
+      #     <<: *get_secrets
       - run:
           name: Build ARM docker
           command: |
@@ -93,8 +93,8 @@ jobs:
       image: ubuntu-2004:202010-01
     steps:
       - setup
-      - run:
-          <<: *get_secrets
+      # - run:
+      #     <<: *get_secrets
       - run:
           name: Build ARM docker
           command: |
@@ -109,8 +109,8 @@ jobs:
       image: ubuntu-2004:202010-01
     steps:
       - setup
-      - run:
-          <<: *get_secrets
+      # - run:
+      #     <<: *get_secrets
       - run:
           name: Build ARM docker
           command: |
@@ -124,8 +124,8 @@ jobs:
     docker:
       - image: jacknewbury/go-docker-builder:latest
     steps:
-      - run:
-          <<: *get_secrets
+      # - run:
+      #     <<: *get_secrets
       - checkout
       - setup_remote_docker:
           version: 20.10.14
